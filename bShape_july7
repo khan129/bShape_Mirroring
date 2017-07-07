@@ -4,23 +4,23 @@ import sys
 def mirrorbShape(selectGeo) 
   selectGeo = cmds.ls(orderedSelection = True)
   baseMesh = selectGeo[0]
-  bShape1 = selectGeo[1]
+  bShape01 = selectGeo[1]
 
   #Create scaled geo and geo to wrap
   cmds.duplicate(baseMesh, n='wrap01')
   cmds.duplicate(baseMesh, n='scale01')
   cmds.setAttr('scale01.scaleX',-1)
 
-  #Make blendshape with scaleGeo to the bShape1
-  cmds.blendShape(bShape1,'scale01',n='blendShape_mirror')
-  cmds.setAttr('blendShape_mirror.' + bShape1 ,0)
+  #Make blendshape with scaleGeo to the bShape01
+  cmds.blendShape(bShape01,'scale01',n='blendShape_mirror')
+  cmds.setAttr('blendShape_mirror.' + bShape01 ,0)
 
   #Wrap to flipped blendshape then duplicate 
   cmds.select('wrap01')
   cmds.select('scale01',tgl=True)
   cmds.CreateWrap()
   cmds.setAttr('wrap1'+'.maxDistance',1)
-  cmds.setAttr('blendShape_mirror.' + mirrorMesh ,1)
+  cmds.setAttr('blendShape_mirror.' + bShape01 ,1)
   cmds.duplicate('wrap01',n='mirroredBlend')
 
   #Cleanup
