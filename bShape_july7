@@ -1,0 +1,44 @@
+####do wrap in isolation and make it work 
+from PySide import QtCore, QtGui
+from shiboken import wrapInstance
+import maya.OpenMayaUI as apiUI
+import sys
+
+selectList = cmds.ls(orderedSelection = True)
+baseMesh = selectList[0]
+mirrorMesh = selectList[1]
+
+cmds.duplicate(baseMesh, n='wrap01')
+cmds.duplicate(baseMesh, n='scale01')
+cmds.setAttr('scale01.scaleX',-1)
+
+#create 2 versions of base mesh
+#wrap01
+#scale01
+
+#make blendshape with scale to the blendshape01
+cmds.blendShape(mirrorMesh,'scale01',n='blendShape_mirror')
+cmds.setAttr('blendShape_mirror.' + mirrorMesh ,0)
+
+
+#wrap to flipped blendshape
+cmds.select('wrap01')
+cmds.select('scale01',tgl=True)
+cmds.CreateWrap()
+cmds.setAttr('wrap1'+'.maxDistance',1)
+cmds.setAttr('blendShape_mirror.' + mirrorMesh ,1)
+
+cmds.duplicate('wrap01',n='mirroredBlend')
+
+cmds.delete('wrap01')
+cmds.delete('scale01')
+
+cmds.move(-2,0,0,'mirroredBlend')
+
+
+
+#duplicate wrap01
+#delete everything else 
+
+
+##End Result: mirrored blendshape ready to be blended (not blended yet though)
