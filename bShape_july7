@@ -1,10 +1,13 @@
-#Blendshape Mirroring Script - Akhan - July7
+#Blendshape Mirroring Script - Akhan - July12
+from PySide import QtCore, QtGui
+from shiboken import wrapInstance
+import maya.OpenMayaUI as apiUI
 import sys
 
-def mirrorbShape(selectGeo) 
-  selectGeo = cmds.ls(orderedSelection = True)
+def mirrorbShape(selectGeo): 
+
   baseMesh = selectGeo[0]
-  bShape01 = selectGeo[1]
+  bShape01 = selectGeo[1]  
 
   #Create scaled geo and geo to wrap
   cmds.duplicate(baseMesh, n='wrap01')
@@ -26,4 +29,7 @@ def mirrorbShape(selectGeo)
   #Cleanup
   cmds.delete('wrap01')
   cmds.delete('scale01')
-
+ 
+  
+selectGeo = cmds.ls(orderedSelection = True)
+mirrorbShape(selectGeo)
