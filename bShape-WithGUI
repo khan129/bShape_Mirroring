@@ -1,0 +1,87 @@
+//
+##Mirror Blend Gui - July12
+from PySide import QtCore, QtGui
+from shiboken import wrapInstance
+import maya.OpenMayaUI as apiUI
+import sys
+
+
+def getMayaWindow():
+
+    ptr = apiUI.MQtUtil.mainWindow()
+    if ptr is not None:
+        return wrapInstance(long(ptr), QtGui.QMainWindow)
+        
+class blendShapeGUI(QtGui.QDialog):
+    def __init__(self,  parent=getMayaWindow()):
+        super(blendShapeGUI, self).__init__(parent)
+        self.initUI()
+         
+    def initUI(self):
+        # layout
+        self.setLayout(QtGui.QVBoxLayout())
+        self.setWindowTitle("Mirror BlendShape")
+        # add tabs          
+        self.layout().addWidget(MyButtons())
+        self.show()
+        
+        
+class MyButtons(QtGui.QWidget):
+    def __init__(self, parent=None):
+        super(MyButtons, self).__init__(parent)
+        
+        # layout
+        self.setLayout(QtGui.QVBoxLayout())
+
+        # buttons
+        
+        self.steplabel = QtGui.QLabel ("Mirror BlendShape")
+        self.layout().addWidget(self.steplabel)
+        
+        blendShapeButton01 =QtGui.QPushButton("Make Mirror")
+        self.layout().addWidget(blendShapeButton01)
+        blendShapeButton01.clicked.connect(self.blendShapeButton01)
+        
+        self.edittext = QtGui.QLineEdit("Name_Blendshape")
+        self.layout().addWidget(self.edittext)
+
+
+    def blendShapeButton01(self):
+        print 'hi'
+        inputText = self.edittext.text()
+        print inputText
+        selectGeo = cmds.ls(orderedSelection = True)
+        mirrorbShape(selectGeo)
+        cmds.rename(inputText)
+
+    
+def mirrorbShape(selectGeo): 
+
+  baseMesh = selectGeo[0]
+  bShape01 = selectGeo[1]  
+
+  #Create scaled geo and geo to wrap
+  cmds.duplicate(baseMesh, n='wrap01')
+  cmds.duplicate(baseMesh, n='scale01')
+  cmds.setAttr('scale01.scaleX',-1)
+
+  #Make blendshape with scaleGeo to the bShape01
+  cmds.blendShape(bShape01,'scale01',n='blendShape_mirror')
+  cmds.setAttr('blendShape_mirror.' + bShape01 ,0)
+
+  #Wrap to flipped blendshape then duplicate 
+  cmds.select('wrap01')
+  cmds.select('scale01',tgl=True)
+  cmds.CreateWrap()
+  cmds.setAttr('wrap1'+'.maxDistance',1)
+  cmds.setAttr('blendShape_mirror.' + bShape01 ,1)
+  cmds.duplicate('wrap01',n='mirroredBlend')
+
+  #Cleanup
+  cmds.delete('wrap01')
+  cmds.delete('scale01')
+ 
+  
+                 
+blendShapeGUI()
+ 
