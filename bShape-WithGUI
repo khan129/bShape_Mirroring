@@ -1,5 +1,4 @@
-//
-##Mirror Blend Gui - July12
+#AUTHOR: AREEBA KHAN
 from PySide import QtCore, QtGui
 from shiboken import wrapInstance
 import maya.OpenMayaUI as apiUI
